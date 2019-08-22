@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 tweepy = "*"
 pandas = "*"
+openpyxl = "*"
 
 [requires]
 python_version = "3.7"

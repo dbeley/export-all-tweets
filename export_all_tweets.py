@@ -1,4 +1,3 @@
-import json
 import configparser
 import pandas as pd
 import argparse
@@ -44,11 +43,7 @@ def process_status(status):
     try:
         tweet["media"] = status.entities["media"][0]["media_url_https"]
     except Exception as e:
-        print(e)
-    try:
-        tweet["url"] = status.entities["media"][0]["expanded_url"]
-    except Exception as e:
-        print(e)
+        logger.debug(e)
     return tweet
 
 
@@ -56,13 +51,17 @@ def main():
     args = parse_args()
     list_users = [x.strip() for x in args.user.split(",")]
     api = twitterconnect()
-
     tweets = []
+    Path("Exports").mkdir(parents=True, exist_ok=True)
 
     for user in list_users:
-        for status in tweepy.Cursor(
-            api.user_timeline, id=user, tweet_mode="extended"
-        ).items():
+        for index, status in enumerate(
+            tweepy.Cursor(
+                api.user_timeline, id=user, tweet_mode="extended"
+            ).items(),
+            1,
+        ):
+            logger.info("Extracting tweet %s for %s.", index, user)
             if args.export_retweets:
                 tweets.append(process_status(status))
             else:
@@ -71,10 +70,6 @@ def main():
                     tweets.append(process_status(status))
                 else:
                     logger.info("Status is a retweet. Skipping.")
-
-        Path("Exports").mkdir(parents=True, exist_ok=True)
-        with open("Exports/export_" + str(user) + ".json", "w") as outfile:
-            json.dump(status._json, outfile, indent=4, sort_keys=True)
 
         df = pd.DataFrame.from_records(tweets)
         print(df.head())

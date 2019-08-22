@@ -10,6 +10,7 @@ The scripts need a valid config file with your twitter API keys (get them at dev
 
 - pandas
 - tweepy
+- openpyxl
 
 ## Installation of the virtualenv with pipenv (recommended)
 
