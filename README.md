@@ -1,6 +1,4 @@
-# twitter-scripts
-
-Some scripts using the twitter api.
+# export-all-tweets
 
 The scripts need a valid config file with your twitter API keys (get them at developer.twitter.com.) in a config.ini file (see config_sample.ini for an example).
 
