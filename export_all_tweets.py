@@ -36,10 +36,6 @@ def process_status(status):
     tweet[
         "url"
     ] = f"https://twitter.com/{tweet['screen_name']}/status/{status.id}"
-    # try:
-    #     tweet["hashtags"] = status.entities["hashtags"]
-    # except Exception as e:
-    #     print(e)
     try:
         tweet["media"] = status.entities["media"][0]["media_url_https"]
     except Exception as e:
@@ -51,10 +47,10 @@ def main():
     args = parse_args()
     list_users = [x.strip() for x in args.user.split(",")]
     api = twitterconnect()
-    tweets = []
     Path("Exports").mkdir(parents=True, exist_ok=True)
 
     for user in list_users:
+        tweets = []
         for index, status in enumerate(
             tweepy.Cursor(
                 api.user_timeline, id=user, tweet_mode="extended"
@@ -76,11 +72,8 @@ def main():
 
         writer = pd.ExcelWriter("Exports/export_" + str(user) + ".xlsx")
         df.to_excel(writer, "Sheet1", index=False)
-
         writer.save()
 
-        # problem with tweet text
-        # df.to_csv("export_" + str(user) + ".csv", sep="\t", index=False)
     logger.info("Runtime : %.2f seconds." % (time.time() - temps_debut))
 
 
